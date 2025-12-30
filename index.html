@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe - Main dengan Teman atau Robot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 i {
+            color: #FFD700;
+            margin-right: 15px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 25px;
+        }
+        
+        .game-settings {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            margin-right: 20px;
+        }
+        
+        .game-board {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mode-selector {
+            margin-bottom: 30px;
+        }
+        
+        .mode-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .mode-title i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .mode-options {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background-color: #e0e0e0;
+            color: #333;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mode-btn i {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mode-btn.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .player-settings {
+            margin-bottom: 25px;
+        }
+        
+        .player-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .player-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-right: 15px;
+        }
+        
+        .player1 .player-icon {
+            background-color: #ff6b6b;
+            color: white;
+        }
+        
+        .player2 .player-icon {
+            background-color: #4ecdc4;
+            color: white;
+        }
+        
+        .player-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .current-player {
+            box-shadow: 0 0 0 3px #FFD700;
+        }
+        
+        .controls {
+            margin-top: 25px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .btn i {
+            margin-right: 10px;
+        }
+        
+        .start-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .start-btn:hover {
+            background-color: #27ae60;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+        
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 10px;
+            margin: 25px 0;
+            width: 100%;
+            max-width: 350px;
+        }
+        
+        .cell {
+            aspect-ratio: 1;
+            background-color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .cell.x {
+            color: #ff6b6b;
+        }
+        
+        .cell.o {
+            color: #4ecdc4;
+        }
+        
+        .game-status {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            width: 100%;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 350px;
+            margin-top: 20px;
+        }
+        
+        .score {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: white;
+            margin: 0 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .score-title {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .player1-score .score-value {
+            color: #ff6b6b;
+        }
+        
+        .player2-score .score-value {
+            color: #4ecdc4;
+        }
+        
+        .difficulty-selector {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .difficulty-selector.show {
+            display: block;
+        }
+        
+        .difficulty-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .difficulty-options {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .difficulty-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #e0e0e0;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .difficulty-btn:hover {
+            background-color: #d0d0d0;
+        }
+        
+        .difficulty-btn.active {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+        }
+        
+        @media (max-width: 768px) {
+            .game-container {
+                flex-direction: column;
+            }
+            
+            .game-settings {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .mode-options {
+                flex-direction: column;
+            }
+        }
+        .support-box{
+  margin-top:25px;
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.support-btn{
+  padding:12px 18px;
+  border-radius:12px;
+  color:#fff;
+  font-weight:600;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,.15);
+  transition:.3s;
+}
+
+.support-btn:hover{
+  transform:translateY(-3px);
+}
+
+.whatsapp{
+  background:#25D366;
+}
+
+.saweria{
+  background:#ff9800;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-gamepad"></i> Tic-Tac-Toe</h1>
+            <p class="subtitle">Main bersama teman atau tantang robot AI</p>
+        </header>
+        
+        <div class="game-container">
+            <div class="game-settings">
+                <div class="mode-selector">
+                    <h2 class="mode-title"><i class="fas fa-users"></i> Pilih Mode Permainan</h2>
+                    <div class="mode-options">
+                        <button class="mode-btn active" id="mode-friend">
+                            <i class="fas fa-user-friends"></i>
+                            <span>Lawan Teman</span>
+                        </button>
+                        <button class="mode-btn" id="mode-robot">
+                            <i class="fas fa-robot"></i>
+                            <span>Lawan Robot</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="player-settings">
+                    <div class="player-info player1 current-player">
+                        <div class="player-icon">X</div>
+                        <div>
+                            <div class="player-name">Pemain 1 (X)</div>
+                            <div class="player-status">Giliran saat ini</div>
+                        </div>
+                    </div>
+                    
+                    <div class="player-info player2">
+                        <div class="player-icon">O</div>
+                        <div>
+                            <div class="player-name" id="player2-name">Pemain 2 (O)</div>
+                            <div class="player-status">Menunggu giliran</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="difficulty-selector" id="difficulty-selector">
+                    <h3 class="difficulty-title">Tingkat Kesulitan Robot:</h3>
+                    <div class="difficulty-options">
+                        <button class="difficulty-btn active" data-level="easy">Mudah</button>
+                        <button class="difficulty-btn" data-level="medium">Sedang</button>
+                        <button class="difficulty-btn" data-level="hard">Sulit</button>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn start-btn" id="start-btn">
+                        <i class="fas fa-play"></i> Mulai Permainan
+                    </button>
+                    <button class="btn reset-btn" id="reset-btn">
+                        <i class="fas fa-redo"></i> Reset Permainan
+                    </button>
+                </div>
+            </div>
+            
+            <div class="game-board">
+                <div class="game-status" id="game-status">
+                    Pilih mode dan klik "Mulai Permainan"
+                </div>
+                
+                <div class="board" id="board">
+                    <!-- Sel tic-tac-toe akan dibuat dengan JavaScript -->
+                </div>
+                
+                <div class="score-board">
+                    <div class="score player1-score">
+                        <div class="score-title">Pemain 1 (X)</div>
+                        <div class="score-value" id="score-x">0</div>
+                    </div>
+                    <div class="score ties-score">
+                        <div class="score-title">Seri</div>
+                        <div class="score-value" id="score-tie">0</div>
+                    </div>
+                    <div class="score player2-score">
+                        <div class="score-title" id="player2-score-title">Pemain 2 (O)</div>
+                        <div class="score-value" id="score-o">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="support-box">
+  <a href="https://whatsapp.com/channel/0029Vb6sIwaJf05ihQmIQ53v"
+     target="_blank"
+     class="support-btn whatsapp">
+    <i class="fa-brands fa-whatsapp"></i>
+    Saluran WhatsApp
+  </a>
+
+  <a href="https://saweria.co/Lyytzy"
+     target="_blank"
+     class="support-btn saweria">
+    <i class="fa-solid fa-mug-hot"></i>
+    Dukung di Saweria
+  </a>
+</div>
+        <footer>
+            <p>Dibuat dengan <i class="fas fa-heart" style="color:#e74c3c;"></i> | Tic-Tac-Toe Game © 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        // Elemen DOM
+        const modeFriendBtn = document.getElementById('mode-friend');
+        const modeRobotBtn = document.getElementById('mode-robot');
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const boardElement = document.getElementById('board');
+        const gameStatusElement = document.getElementById('game-status');
+        const player2NameElement = document.getElementById('player2-name');
+        const player2ScoreTitleElement = document.getElementById('player2-score-title');
+        const difficultySelector = document.getElementById('difficulty-selector');
+        const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+        const player1Element = document.querySelector('.player1');
+        const player2Element = document.querySelector('.player2');
+        const scoreXElement = document.getElementById('score-x');
+        const scoreOElement = document.getElementById('score-o');
+        const scoreTieElement = document.getElementById('score-tie');
+        
+        // Variabel game
+        let gameMode = 'friend'; // 'friend' atau 'robot'
+        let gameActive = false;
+        let currentPlayer = 'X';
+        let gameState = ['', '', '', '', '', '', '', '', ''];
+        let scores = { X: 0, O: 0, tie: 0 };
+        let difficulty = 'easy'; // 'easy', 'medium', 'hard'
+        
+        // Kombinasi pemenang
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Baris
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Kolom
+            [0, 4, 8], [2, 4, 6]             // Diagonal
+        ];
+        
+        // Inisialisasi papan permainan
+        function initializeBoard() {
+            boardElement.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.setAttribute('data-index', i);
+                cell.addEventListener('click', () => cellClicked(i));
+                boardElement.appendChild(cell);
+            }
+        }
+        
+        // Mengatur mode permainan
+        modeFriendBtn.addEventListener('click', () => {
+            setGameMode('friend');
+        });
+        
+        modeRobotBtn.addEventListener('click', () => {
+            setGameMode('robot');
+        });
+        
+        function setGameMode(mode) {
+            gameMode = mode;
+            
+            // Update tombol mode
+            modeFriendBtn.classList.toggle('active', mode === 'friend');
+            modeRobotBtn.classList.toggle('active', mode === 'robot');
+            
+            // Update nama pemain 2
+            if (mode === 'robot') {
+                player2NameElement.textContent = 'Robot (O)';
+                player2ScoreTitleElement.textContent = 'Robot (O)';
+                difficultySelector.classList.add('show');
+            } else {
+                player2NameElement.textContent = 'Pemain 2 (O)';
+                player2ScoreTitleElement.textContent = 'Pemain 2 (O)';
+                difficultySelector.classList.remove('show');
+            }
+            
+            // Reset game jika sedang berjalan
+            if (gameActive) {
+                resetGame();
+            }
+        }
+        
+        // Mengatur tingkat kesulitan
+        difficultyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                difficultyButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                difficulty = button.getAttribute('data-level');
+            });
+        });
+        
+        // Memulai permainan
+        startBtn.addEventListener('click', startGame);
+        
+        function startGame() {
+            if (gameActive) return;
+            
+            gameActive = true;
+            gameState = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            
+            // Update tampilan
+            gameStatusElement.textContent = `Giliran ${currentPlayer}`;
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<i class="fas fa-pause"></i> Sedang Berjalan';
+            startBtn.style.backgroundColor = '#f39c12';
+            
+            // Update indikator pemain aktif
+            updatePlayerIndicator();
+            
+            // Inisialisasi papan
+            initializeBoard();
+            
+            // Jika melawan robot dan robot jalan pertama (O), robot langsung jalan
+            if (gameMode === 'robot' && currentPlayer === 'O') {
+                setTimeout(makeRobotMove, 500);
+            }
+        }
+        
+        // Reset permainan
+        resetBtn.addEventListener('click', resetGame);
+        
+        function resetGame() {
+            gameActive = false;
+            gameState = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            
+            // Update tampilan
+            gameStatusElement.textContent = 'Pilih mode dan klik "Mulai Permainan"';
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Mulai Permainan';
+            startBtn.style.backgroundColor = '#2ecc71';
+            
+            // Update indikator pemain aktif
+            updatePlayerIndicator();
+            
+            // Kosongkan papan
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('x', 'o');
+            });
+        }
+        
+        // Ketika sel diklik
+        function cellClicked(cellIndex) {
+            // Cek apakah game aktif dan sel kosong
+            if (!gameActive || gameState[cellIndex] !== '') {
+                return;
+            }
+            
+            // Jika melawan robot dan giliran robot, abaikan klik
+            if (gameMode === 'robot' && currentPlayer === 'O') {
+                return;
+            }
+            
+            // Update game state
+            gameState[cellIndex] = currentPlayer;
+            
+            // Update tampilan sel
+            const cell = document.querySelector(`.cell[data-index="${cellIndex}"]`);
+            cell.textContent = currentPlayer;
+            cell.classList.add(currentPlayer.toLowerCase());
+            
+            // Cek apakah ada pemenang
+            if (checkWin()) {
+                endGame(false);
+                return;
+            }
+            
+            // Cek apakah seri
+                        if (checkDraw()) {
+                endGame(true);
+                return;
+            }
+            
+            // Ganti giliran
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            gameStatusElement.textContent = `Giliran ${currentPlayer}`;
+            updatePlayerIndicator();
+            
+            // Jika melawan robot, robot jalan
+            if (gameMode === 'robot' && currentPlayer === 'O' && gameActive) {
+                setTimeout(makeRobotMove, 500);
+            }
+        }
+        
+        // Robot membuat langkah
+        function makeRobotMove() {
+            if (!gameActive || currentPlayer !== 'O') return;
+            
+            let cellIndex;
+            
+            if (difficulty === 'easy') {
+                // Mode mudah: langkah acak
+                cellIndex = getRandomMove();
+            } else if (difficulty === 'medium') {
+                // Mode sedang: 70% cerdas, 30% acak
+                cellIndex = Math.random() < 0.7 ? getSmartMove() : getRandomMove();
+            } else {
+                // Mode sulit: selalu cerdas
+                cellIndex = getSmartMove();
+            }
+            
+            // Jika langkah valid, lakukan langkah
+            if (cellIndex !== -1) {
+                gameState[cellIndex] = 'O';
+                
+                // Update tampilan sel
+                const cell = document.querySelector(`.cell[data-index="${cellIndex}"]`);
+                cell.textContent = 'O';
+                cell.classList.add('o');
+                
+                // Cek apakah ada pemenang
+                if (checkWin()) {
+                    endGame(false);
+                    return;
+                }
+                
+                // Cek apakah seri
+                if (checkDraw()) {
+                    endGame(true);
+                    return;
+                }
+                
+                // Ganti giliran ke pemain
+                currentPlayer = 'X';
+                gameStatusElement.textContent = `Giliran ${currentPlayer}`;
+                updatePlayerIndicator();
+            }
+        }
+        
+        // Mendapatkan langkah acak
+        function getRandomMove() {
+            const emptyCells = gameState
+                .map((cell, index) => cell === '' ? index : null)
+                .filter(index => index !== null);
+            
+            if (emptyCells.length === 0) return -1;
+            
+            const randomIndex = Math.floor(Math.random() * emptyCells.length);
+            return emptyCells[randomIndex];
+        }
+        
+        // Mendapatkan langkah cerdas
+        function getSmartMove() {
+            // 1. Cek apakah robot bisa menang
+            for (let i = 0; i < gameState.length; i++) {
+                if (gameState[i] === '') {
+                    gameState[i] = 'O';
+                    if (checkWinForPlayer('O')) {
+                        gameState[i] = '';
+                        return i;
+                    }
+                    gameState[i] = '';
+                }
+            }
+            
+            // 2. Cek apakah pemain bisa menang, blokir
+            for (let i = 0; i < gameState.length; i++) {
+                if (gameState[i] === '') {
+                    gameState[i] = 'X';
+                    if (checkWinForPlayer('X')) {
+                        gameState[i] = '';
+                        return i;
+                    }
+                    gameState[i] = '';
+                }
+            }
+            
+            // 3. Coba ambil tengah jika kosong
+            if (gameState[4] === '') return 4;
+            
+            // 4. Coba ambil sudut jika kosong
+            const corners = [0, 2, 6, 8];
+            const emptyCorners = corners.filter(index => gameState[index] === '');
+            if (emptyCorners.length > 0) {
+                return emptyCorners[Math.floor(Math.random() * emptyCorners.length)];
+            }
+            
+            // 5. Ambil langkah acak
+            return getRandomMove();
+        }
+        
+        // Cek kemenangan untuk pemain tertentu
+        function checkWinForPlayer(player) {
+            for (let condition of winningConditions) {
+                const [a, b, c] = condition;
+                if (gameState[a] === player && gameState[b] === player && gameState[c] === player) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // Cek apakah ada pemenang
+        function checkWin() {
+            return checkWinForPlayer(currentPlayer);
+        }
+        
+        // Cek apakah seri
+        function checkDraw() {
+            return !gameState.includes('');
+        }
+        
+        // Akhiri permainan
+        function endGame(isDraw) {
+            gameActive = false;
+            
+            if (isDraw) {
+                gameStatusElement.textContent = 'Permainan Seri!';
+                scores.tie++;
+                scoreTieElement.textContent = scores.tie;
+            } else {
+                const winner = currentPlayer;
+                gameStatusElement.textContent = `Pemenang: ${winner}!`;
+                scores[winner]++;
+                
+                if (winner === 'X') {
+                    scoreXElement.textContent = scores.X;
+                } else {
+                    scoreOElement.textContent = scores.O;
+                }
+                
+                // Highlight sel pemenang
+                highlightWinningCells();
+            }
+            
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Mulai Permainan Baru';
+            startBtn.style.backgroundColor = '#2ecc71';
+        }
+        
+        // Highlight sel pemenang
+        function highlightWinningCells() {
+            for (let condition of winningConditions) {
+                const [a, b, c] = condition;
+                if (
+                    gameState[a] === currentPlayer &&
+                    gameState[b] === currentPlayer &&
+                    gameState[c] === currentPlayer
+                ) {
+                    const cells = document.querySelectorAll('.cell');
+                    cells[a].style.backgroundColor = '#FFEB3B';
+                    cells[b].style.backgroundColor = '#FFEB3B';
+                    cells[c].style.backgroundColor = '#FFEB3B';
+                    break;
+                }
+            }
+        }
+        
+        // Update indikator pemain aktif
+        function updatePlayerIndicator() {
+            if (currentPlayer === 'X') {
+                player1Element.classList.add('current-player');
+                player2Element.classList.remove('current-player');
+            } else {
+                player1Element.classList.remove('current-player');
+                player2Element.classList.add('current-player');
+            }
+        }
+        
+        // Inisialisasi awal
+        initializeBoard();
+    </script>
+</body>
+</html>
